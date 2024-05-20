@@ -22,7 +22,7 @@ const report = (line, where, message) => {
 };
 
 if (!process.argv[2]) {
-  console.log("Error: source file  not provided");
+  console.log("Error: source file not provided");
   process.exit(1);
 }
 
