@@ -32,6 +32,6 @@
       "eslint --fix",
       "prettier --write"
     ],
-    "!(*.js|*.jsx)": "prettier --write"
+    "!(*.js|*.jsx)": "prettier --write --ignore-unknown"
   }
 }
