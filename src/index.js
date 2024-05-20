@@ -1,7 +1,7 @@
 import { readFile } from "fs/promises";
 import { Scanner } from "./scanner.js";
 import { TokenType } from "./token-type.js";
-import { Parser } from "./Parser.js";
+import { Parser } from "./parser.js";
 
 let hadError = false;
 
