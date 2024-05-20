@@ -1,12 +1,1 @@
-var name = "jhon name";
-var age = 10;
-var nilVar = nil;
-
-if (age >= 20) {
-  print ("name" + age)
-}
-
-while (name == 10) {
-  print("age:", age);
-  print("name:", name)
-}
+!(6 > 8) == (15 * 8)

@@ -1,19 +1,33 @@
 import { readFile } from "fs/promises";
 import { Scanner } from "./scanner.js";
+import { TokenType } from "./token-type.js";
+import { Parser } from "./Parser.js";
 
 let hadError = false;
 
 const run = (source) => {
   const scanner = new Scanner(source);
   const tokens = scanner.scanTokens();
+  const parser = new Parser(tokens);
+  const ast = parser.parse();
 
-  for (const token of tokens) {
-    console.log(token.toString());
+  if (hadError) {
+    return;
   }
+
+  console.log(ast);
 };
 
 export const error = (line, message) => {
   report(line, "", message);
+};
+
+export const errorParser = (token, message) => {
+  if (token.type === TokenType.EOF) {
+    report(token.line, " at end", message);
+  } else {
+    report(token.line, " at '" + token.lexeme + "'", message);
+  }
 };
 
 const report = (line, where, message) => {
