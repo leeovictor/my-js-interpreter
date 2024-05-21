@@ -1,12 +1,11 @@
-import globals from "globals";
-import pluginJs from "@eslint/js";
+const globals = require("globals");
+const pluginJs = require("@eslint/js");
+const tseslint = require("typescript-eslint");
 
-export default [
+module.exports = tseslint.config(
   pluginJs.configs.recommended,
+  ...tseslint.configs.recommended,
   {
-    languageOptions: { globals: globals.node },
-    rules: {
-      eqeqeq: "error",
-    },
+    ignores: ["eslint.config.js", "build"],
   },
-];
+);

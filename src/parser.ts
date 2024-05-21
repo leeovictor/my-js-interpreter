@@ -1,37 +1,36 @@
-import { TokenType } from "./token-type.js";
-import { Binary, Grouping, Literal, Unary } from "./expr.js";
-import { errorParser } from "./index.js";
+import { TokenType } from "./token-type";
+import { Binary, Grouping, Literal, Unary, Expression } from "./expr";
+import { Lev } from "./index";
+import { Token } from "./token";
 
 class ParserError extends Error {
-  constructor(message) {
+  constructor(message: string) {
     super(message);
     this.name = "ParserError";
   }
 }
 
 export class Parser {
-  /**
-   * @param {Token[]} tokens
-   */
-  constructor(tokens) {
+  tokens: Array<Token>;
+  current = 0;
+
+  constructor(tokens: Array<Token>) {
     this.tokens = tokens;
-    this.current = 0;
   }
 
   parse() {
     try {
       return this.expression();
-      // eslint-disable-next-line no-unused-vars
     } catch (error) {
       return null;
     }
   }
 
-  expression() {
+  private expression(): Expression {
     return this.equality();
   }
 
-  equality() {
+  private equality(): Expression {
     let expr = this.comparison();
     if (this.match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL)) {
       const operator = this.previous();
@@ -41,7 +40,7 @@ export class Parser {
     return expr;
   }
 
-  comparison() {
+  private comparison() {
     let expr = this.term();
     while (
       this.match(
@@ -58,7 +57,7 @@ export class Parser {
     return expr;
   }
 
-  term() {
+  private term() {
     let expr = this.factor();
     while (this.match(TokenType.MINUS, TokenType.PLUS)) {
       const operator = this.previous();
@@ -68,7 +67,7 @@ export class Parser {
     return expr;
   }
 
-  factor() {
+  private factor() {
     let expr = this.unary();
     while (this.match(TokenType.SLASH, TokenType.STAR)) {
       const operator = this.previous();
@@ -78,7 +77,7 @@ export class Parser {
     return expr;
   }
 
-  unary() {
+  private unary(): Expression {
     if (this.match(TokenType.BANG, TokenType.MINUS)) {
       const operator = this.previous();
       const right = this.unary();
@@ -87,7 +86,7 @@ export class Parser {
     return this.primary();
   }
 
-  primary() {
+  private primary() {
     if (this.match(TokenType.FALSE)) return new Literal(false);
     if (this.match(TokenType.TRUE)) return new Literal(true);
     if (this.match(TokenType.NIL)) return new Literal(null);
@@ -104,18 +103,18 @@ export class Parser {
     throw this.error(this.peek(), "Expect expression");
   }
 
-  consume(tokenType, message) {
+  private consume(tokenType: TokenType, message: string) {
     if (this.check(tokenType)) return this.advance();
 
     throw this.error(this.peek(), message);
   }
 
-  error(token, message) {
-    errorParser(token, message);
+  private error(token: Token, message: string) {
+    Lev.errorParser(token, message);
     return new ParserError(message);
   }
 
-  synchronize() {
+  private synchronize() {
     this.advance();
     while (!this.isAtEnd()) {
       if (this.previous().type === TokenType.SEMICOLON) return;
@@ -135,7 +134,7 @@ export class Parser {
     }
   }
 
-  match(...tokenTypes) {
+  private match(...tokenTypes: Array<TokenType>) {
     for (const type of tokenTypes) {
       if (this.check(type)) {
         this.advance();
@@ -145,27 +144,27 @@ export class Parser {
     return false;
   }
 
-  check(type) {
+  private check(type: TokenType) {
     if (this.isAtEnd()) return false;
     return this.peek().type === type;
   }
 
-  advance() {
+  private advance() {
     if (!this.isAtEnd()) {
       this.current++;
     }
     return this.previous();
   }
 
-  isAtEnd() {
+  private isAtEnd() {
     return this.peek().type === TokenType.EOF;
   }
 
-  peek() {
+  private peek() {
     return this.tokens[this.current];
   }
 
-  previous() {
+  private previous() {
     return this.tokens[this.current - 1];
   }
 }

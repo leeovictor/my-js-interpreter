@@ -1,40 +1,38 @@
-import { Token } from "./token.js";
-import { TokenType } from "./token-type.js";
-import * as Lev from "./index.js";
+import { Token } from "./token";
+import { TokenType } from "./token-type";
+import { Lev } from "./index";
 
 export class Scanner {
-  /**
-   * @param {string} source
-   */
-  constructor(source) {
+  source: string;
+  tokens: Array<Token> = [];
+
+  private start = 0;
+  private current = 0;
+  private line = 1;
+  private reservedWords: { [key: string]: TokenType } = {
+    and: TokenType.AND,
+    class: TokenType.CLASS,
+    else: TokenType.ELSE,
+    false: TokenType.FALSE,
+    for: TokenType.FOR,
+    fun: TokenType.FUN,
+    if: TokenType.IF,
+    nil: TokenType.NIL,
+    or: TokenType.OR,
+    print: TokenType.PRINT,
+    return: TokenType.RETURN,
+    super: TokenType.SUPER,
+    this: TokenType.THIS,
+    true: TokenType.TRUE,
+    var: TokenType.VAR,
+    while: TokenType.WHILE,
+  };
+
+  constructor(source: string) {
     this.source = source;
-    this.tokens = [];
-
-    this.start = 0;
-    this.current = 0;
-    this.line = 1;
-
-    this.reservedWords = {
-      and: TokenType.AND,
-      class: TokenType.CLASS,
-      else: TokenType.ELSE,
-      false: TokenType.FALSE,
-      for: TokenType.FOR,
-      fun: TokenType.FUN,
-      if: TokenType.IF,
-      nil: TokenType.NIL,
-      or: TokenType.OR,
-      print: TokenType.PRINT,
-      return: TokenType.RETURN,
-      super: TokenType.SUPER,
-      this: TokenType.THIS,
-      true: TokenType.TRUE,
-      var: TokenType.VAR,
-      while: TokenType.WHILE,
-    };
   }
 
-  scanTokens() {
+  scanTokens(): Array<Token> {
     while (!this.isAtEnd()) {
       this.start = this.current;
       this.scanToken();
@@ -43,7 +41,7 @@ export class Scanner {
     return this.tokens;
   }
 
-  scanToken() {
+  private scanToken() {
     const c = this.advance();
     switch (c) {
       case "(":
@@ -123,7 +121,7 @@ export class Scanner {
     }
   }
 
-  identifier() {
+  private identifier() {
     while (this.isAlphaNumeric(this.peek())) {
       this.advance();
     }
@@ -132,15 +130,15 @@ export class Scanner {
     this.addToken(this.reservedWords[text] ?? TokenType.IDENTIFIER);
   }
 
-  isAlpha(c) {
+  private isAlpha(c: string): boolean {
     return (c >= "a" && c <= "z") || (c >= "A" && c <= "Z") || c === "_";
   }
 
-  isAlphaNumeric(c) {
+  private isAlphaNumeric(c: string): boolean {
     return this.isAlpha(c) || this.isDigit(c);
   }
 
-  number() {
+  private number() {
     while (this.isDigit(this.peek())) {
       this.advance();
     }
@@ -158,16 +156,16 @@ export class Scanner {
     );
   }
 
-  peekNext() {
+  private peekNext() {
     if (this.current + 1 >= this.source.length) return "\0";
     return this.source.charAt(this.current + 1);
   }
 
-  isDigit(c) {
+  private isDigit(c: string): boolean {
     return c >= "0" && c <= "9";
   }
 
-  string() {
+  private string() {
     while (this.peek() !== '"' && !this.isAtEnd()) {
       if (this.peek() === "\n") {
         this.line++;
@@ -185,12 +183,12 @@ export class Scanner {
     this.addToken(TokenType.STRING, value);
   }
 
-  peek() {
+  private peek(): string {
     if (this.isAtEnd()) return "\0";
     return this.source.charAt(this.current);
   }
 
-  match(expected) {
+  private match(expected: string): boolean {
     if (this.isAtEnd()) return false;
     if (this.source.charAt(this.current) !== expected) return false;
 
@@ -198,15 +196,15 @@ export class Scanner {
     return true;
   }
 
-  isAtEnd() {
+  private isAtEnd(): boolean {
     return this.current >= this.source.length;
   }
 
-  advance() {
+  private advance(): string {
     return this.source.charAt(this.current++);
   }
 
-  addToken(type, literal) {
+  private addToken(type: TokenType, literal?: unknown) {
     this.tokens.push(
       new Token(
         type,

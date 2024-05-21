@@ -3,12 +3,12 @@
   "version": "0.0.1",
   "description": "My interpreter implementation",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "lint": "eslint --fix src/**",
-    "dev": "nodemon src/index.js",
-    "start": "node src/index.js",
+    "dev": "nodemon src/index.ts",
+    "start": "ts-node src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
     "format": "prettier --write .",
     "prepare": "husky"
   },
@@ -19,19 +19,23 @@
   "author": "Leonardo Victor",
   "license": "ISC",
   "devDependencies": {
-    "@eslint/js": "^9.3.0",
-    "eslint": "^9.3.0",
+    "@eslint/js": "^8.56.0",
+    "@tsconfig/recommended": "^1.0.6",
+    "eslint": "^8.56.0",
     "globals": "^15.3.0",
     "husky": "^9.0.11",
     "lint-staged": "^15.2.2",
     "nodemon": "^3.1.0",
-    "prettier": "^3.2.5"
+    "prettier": "^3.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5",
+    "typescript-eslint": "^7.10.0"
   },
   "lint-staged": {
-    "*.{js,jsx}": [
+    "*.{js,jsx,ts,tsx}": [
       "eslint --fix",
       "prettier --write"
     ],
-    "!(*.js|*.jsx)": "prettier --write --ignore-unknown"
+    "!(*.js|*.jsx|*.ts|*.tsx)": "prettier --write --ignore-unknown"
   }
 }
