@@ -1,7 +1,7 @@
 {
-  "name": "my-interpreter",
+  "name": "simple-ts-interpreter",
   "version": "0.0.1",
-  "description": "My interpreter implementation",
+  "description": "Simple interpreter implementation",
   "main": "index.js",
   "scripts": {
     "lint": "eslint --fix src/**",
