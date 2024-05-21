@@ -1,5 +1,5 @@
-import { Token } from "./token";
-import { TokenType } from "./token-type";
+import { Token } from "./Token";
+import { TokenType } from "./TokenType";
 import { Lev } from "./index";
 
 export class Scanner {

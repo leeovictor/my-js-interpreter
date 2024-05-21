@@ -1,7 +1,7 @@
-import { TokenType } from "./token-type";
-import { Binary, Grouping, Literal, Unary, Expression } from "./expr";
+import { TokenType } from "./TokenType";
+import { Binary, Grouping, Literal, Unary, Expression } from "./Expression";
 import { Lev } from "./index";
-import { Token } from "./token";
+import { Token } from "./Token";
 
 class ParserError extends Error {
   constructor(message: string) {

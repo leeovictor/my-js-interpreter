@@ -1,8 +1,8 @@
 import { readFile } from "fs/promises";
-import { Scanner } from "./scanner";
-import { TokenType } from "./token-type";
-import { Parser } from "./parser";
-import { Token } from "./token";
+import { Scanner } from "./Scanner";
+import { TokenType } from "./TokenType";
+import { Parser } from "./Parser";
+import { Token } from "./Token";
 
 export class Lev {
   static hadError = false;
