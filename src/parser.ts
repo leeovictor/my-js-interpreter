@@ -22,59 +22,46 @@ export class Parser {
     try {
       return this.expression();
     } catch (error) {
+      console.log(error);
       return null;
     }
   }
 
-  private expression(): Expression {
+  private expression() {
     return this.equality();
   }
 
-  private equality(): Expression {
-    let expr = this.comparison();
-    if (this.match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL)) {
-      const operator = this.previous();
-      const right = this.comparison();
-      expr = new Binary(expr, operator, right);
-    }
-    return expr;
+  private equality() {
+    return this.parseLeftAssociateBinaryOp(
+      [TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL],
+      this.comparison.bind(this),
+    );
   }
 
   private comparison() {
-    let expr = this.term();
-    while (
-      this.match(
+    return this.parseLeftAssociateBinaryOp(
+      [
         TokenType.GREATER,
         TokenType.GREATER_EQUAL,
         TokenType.LESS,
         TokenType.LESS_EQUAL,
-      )
-    ) {
-      const operator = this.previous();
-      const right = this.term();
-      expr = new Binary(expr, operator, right);
-    }
-    return expr;
+      ],
+      this.term.bind(this),
+    );
   }
 
   private term() {
-    let expr = this.factor();
-    while (this.match(TokenType.MINUS, TokenType.PLUS)) {
-      const operator = this.previous();
-      const right = this.factor();
-      expr = new Binary(expr, operator, right);
-    }
-    return expr;
+    return this.parseLeftAssociateBinaryOp(
+      [TokenType.MINUS, TokenType.PLUS],
+      this.factor.bind(this),
+    );
   }
 
   private factor() {
-    let expr = this.unary();
-    while (this.match(TokenType.SLASH, TokenType.STAR)) {
-      const operator = this.previous();
-      const right = this.unary();
-      expr = new Binary(expr, operator, right);
-    }
-    return expr;
+    return this.parseLeftAssociateBinaryOp(
+      [TokenType.SLASH, TokenType.STAR],
+      this.unary.bind(this),
+    );
   }
 
   private unary(): Expression {
@@ -94,6 +81,7 @@ export class Parser {
     if (this.match(TokenType.NUMBER, TokenType.STRING)) {
       return new Literal(this.previous().literal);
     }
+
     if (this.match(TokenType.LEFT_PAREN)) {
       const expr = this.expression();
       this.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression");
@@ -101,6 +89,19 @@ export class Parser {
     }
 
     throw this.error(this.peek(), "Expect expression");
+  }
+
+  private parseLeftAssociateBinaryOp(
+    tokens: Array<TokenType>,
+    operandMethod: () => Expression,
+  ): Expression {
+    let expr = operandMethod();
+    while (this.match(...tokens)) {
+      const operator = this.previous();
+      const right = operandMethod();
+      expr = new Binary(expr, operator, right);
+    }
+    return expr;
   }
 
   private consume(tokenType: TokenType, message: string) {
