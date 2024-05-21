@@ -3,9 +3,18 @@ import { Scanner } from "./Scanner";
 import { TokenType } from "./TokenType";
 import { Parser } from "./Parser";
 import { Token } from "./Token";
+import { RuntimeError } from "./RuntimeError";
+import { Interpreter } from "./Interpreter";
 
 export class Lev {
   static hadError = false;
+  static hadRuntimeError = false;
+  static interpreter = new Interpreter();
+
+  static runtimeError(err: RuntimeError) {
+    console.error(`${err.message}\n[line ${err.token.line}]`);
+    this.hadRuntimeError = true;
+  }
 
   static error(line: number, message: string) {
     this.report(line, "", message);
@@ -20,13 +29,13 @@ export class Lev {
   }
 
   static report(line: number, where: string, message: string) {
-    console.log(`[line ${line}] Error${where}: ${message}`);
+    console.error(`[line ${line}] Error${where}: ${message}`);
     this.hadError = true;
   }
 
   async run() {
     if (!process.argv[2]) {
-      console.log("Error: source file not provided");
+      console.error("Error: source file not provided");
       process.exit(1);
     }
 
@@ -34,9 +43,7 @@ export class Lev {
       const source = await readFile(process.argv[2], { encoding: "utf-8" });
       this.runSource(source);
 
-      if (Lev.hadError) {
-        process.exit(1);
-      }
+      if (Lev.hadError || Lev.hadRuntimeError) process.exit(1);
     } catch (err) {
       console.log(err);
       process.exit(1);
@@ -45,13 +52,10 @@ export class Lev {
 
   private runSource(source: string) {
     const tokens = new Scanner(source).scanTokens();
-    console.log(tokens);
     const astTree = new Parser(tokens).parse();
-    console.log(astTree);
 
-    if (Lev.hadError) {
-      return;
-    }
+    if (Lev.hadError) return;
+    Lev.interpreter.interpret(astTree!);
   }
 }
 

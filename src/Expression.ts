@@ -3,8 +3,8 @@ import { Token } from "./Token";
 export interface Visitor<R> {
   visitBinary(binary: Binary): R;
   visitGrouping(grouping: Grouping): R;
-  visitLiteral(grouping: Literal): R;
-  visitUnary(grouping: Unary): R;
+  visitLiteral(literal: Literal): R;
+  visitUnary(unary: Unary): R;
 }
 
 export abstract class Expression {
