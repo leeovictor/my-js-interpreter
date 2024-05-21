@@ -2,7 +2,11 @@
 
 A simple TypeScript interpreter.
 
-## Used grammar
+## Table of contents
+
+TODO
+
+## Language Grammar
 
 TODO
 
@@ -17,5 +21,9 @@ TODO
 TODO
 
 ### Evaluate
+
+TODO
+
+## References
 
 TODO
