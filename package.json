@@ -4,6 +4,7 @@
   "description": "Simple interpreter implementation",
   "main": "index.js",
   "scripts": {
+    "start:build": "node build/index.js main.lev",
     "lint": "eslint --fix src/**",
     "dev": "nodemon -e ts,json,lev src/index.ts",
     "start": "ts-node src/index.ts",

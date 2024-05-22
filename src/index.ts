@@ -33,7 +33,7 @@ export class Lev {
     this.hadError = true;
   }
 
-  async run() {
+  async main() {
     if (!process.argv[2]) {
       console.error("Error: source file not provided");
       process.exit(1);
@@ -41,7 +41,7 @@ export class Lev {
 
     try {
       const source = await readFile(process.argv[2], { encoding: "utf-8" });
-      this.runSource(source);
+      this.run(source);
 
       if (Lev.hadError || Lev.hadRuntimeError) process.exit(1);
     } catch (err) {
@@ -50,7 +50,7 @@ export class Lev {
     }
   }
 
-  private runSource(source: string) {
+  private run(source: string) {
     const tokens = new Scanner(source).scanTokens();
     const statements = new Parser(tokens).parse();
 
@@ -60,4 +60,4 @@ export class Lev {
   }
 }
 
-void new Lev().run();
+void new Lev().main();
