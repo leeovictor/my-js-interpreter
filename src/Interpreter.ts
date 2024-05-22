@@ -55,16 +55,16 @@ export class Interpreter implements Visitor<unknown> {
         return !this.isEqual(right, left);
       case TokenType.GREATER:
         this.checkNumberOperands(binary.operator, left, right);
-        return (right as number) > (left as number);
+        return (left as number) > (right as number);
       case TokenType.GREATER_EQUAL:
         this.checkNumberOperands(binary.operator, left, right);
-        return (right as number) >= (left as number);
+        return (left as number) >= (right as number);
       case TokenType.LESS:
         this.checkNumberOperands(binary.operator, left, right);
-        return (right as number) < (left as number);
+        return (left as number) < (right as number);
       case TokenType.LESS_EQUAL:
         this.checkNumberOperands(binary.operator, left, right);
-        return (right as number) <= (left as number);
+        return (left as number) <= (right as number);
       case TokenType.MINUS:
         this.checkNumberOperands(binary.operator, left, right);
         return (left as number) - (right as number);
