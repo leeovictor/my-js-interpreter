@@ -5,7 +5,9 @@ module.exports = tseslint.config(
   pluginJs.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
   {
-    ignores: ["eslint.config.js", "build"],
+    ignores: ["build/", "*.js"],
+  },
+  {
     languageOptions: {
       parserOptions: {
         project: true,
