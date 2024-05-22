@@ -34,7 +34,7 @@ export class Parser {
   private equality() {
     return this.parseLeftAssociateBinaryOp(
       [TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL],
-      this.comparison.bind(this),
+      () => this.comparison(),
     );
   }
 
@@ -46,21 +46,21 @@ export class Parser {
         TokenType.LESS,
         TokenType.LESS_EQUAL,
       ],
-      this.term.bind(this),
+      () => this.term(),
     );
   }
 
   private term() {
     return this.parseLeftAssociateBinaryOp(
       [TokenType.MINUS, TokenType.PLUS],
-      this.factor.bind(this),
+      () => this.factor(),
     );
   }
 
   private factor() {
     return this.parseLeftAssociateBinaryOp(
       [TokenType.SLASH, TokenType.STAR],
-      this.unary.bind(this),
+      () => this.unary(),
     );
   }
 
@@ -93,12 +93,12 @@ export class Parser {
 
   private parseLeftAssociateBinaryOp(
     tokens: Array<TokenType>,
-    operandMethod: () => Expression,
+    operandLambda: () => Expression,
   ): Expression {
-    let expr = operandMethod();
+    let expr = operandLambda();
     while (this.match(...tokens)) {
       const operator = this.previous();
-      const right = operandMethod();
+      const right = operandLambda();
       expr = new Binary(expr, operator, right);
     }
     return expr;

@@ -52,11 +52,12 @@ export class Lev {
 
   private runSource(source: string) {
     const tokens = new Scanner(source).scanTokens();
-    const astTree = new Parser(tokens).parse();
+    const expression = new Parser(tokens).parse();
 
     if (Lev.hadError) return;
-    Lev.interpreter.interpret(astTree!);
+
+    Lev.interpreter.interpret(expression!);
   }
 }
 
-new Lev().run();
+void new Lev().run();

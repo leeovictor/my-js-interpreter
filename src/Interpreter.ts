@@ -71,10 +71,10 @@ export class Interpreter implements Visitor<unknown> {
       case TokenType.PLUS:
         // string concat operator overload
         if (typeof left === "string" && typeof right === "string") {
-          return (left as string) + (right as string);
+          return left + right;
         }
         if (typeof left === "number" && typeof right === "number") {
-          return (left as number) + (right as number);
+          return left + right;
         }
 
         throw new RuntimeError(
@@ -108,7 +108,7 @@ export class Interpreter implements Visitor<unknown> {
 
   private isTruthy(literal: unknown): boolean {
     if (literal === null) return false;
-    if (typeof literal === "boolean") return literal as boolean;
+    if (typeof literal === "boolean") return literal;
     return true;
   }
 
