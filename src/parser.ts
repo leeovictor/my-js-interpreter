@@ -2,6 +2,7 @@ import { TokenType } from "./TokenType";
 import { Binary, Grouping, Literal, Unary, Expression } from "./Expression";
 import { Lev } from "./index";
 import { Token } from "./Token";
+import { ExpressionStatement, PrintStatement, Statement } from "./Statement";
 
 class ParserError extends Error {
   constructor(message: string) {
@@ -18,13 +19,29 @@ export class Parser {
     this.tokens = tokens;
   }
 
-  parse() {
-    try {
-      return this.expression();
-    } catch (error) {
-      console.log(error);
-      return null;
+  parse(): Array<Statement> {
+    const statements = [];
+    while (!this.isAtEnd()) {
+      statements.push(this.statement());
     }
+    return statements;
+  }
+
+  private statement(): Statement {
+    if (this.match(TokenType.PRINT)) return this.printStatement();
+    return this.expressionStatement();
+  }
+
+  private expressionStatement(): Statement {
+    const expr = this.expression();
+    this.consume(TokenType.SEMICOLON, "Expect ';' after expression.");
+    return new ExpressionStatement(expr);
+  }
+
+  private printStatement(): Statement {
+    const expr = this.expression();
+    this.consume(TokenType.SEMICOLON, "Expect ';' after value.");
+    return new PrintStatement(expr);
   }
 
   private expression() {

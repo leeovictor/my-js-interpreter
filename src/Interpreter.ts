@@ -8,19 +8,35 @@ import {
   Visitor,
 } from "./Expression";
 import { RuntimeError } from "./RuntimeError";
+import {
+  ExpressionStatement,
+  PrintStatement,
+  Statement,
+  StatementVisitor,
+} from "./Statement";
 import { Token } from "./Token";
 import { TokenType } from "./TokenType";
 
-export class Interpreter implements Visitor<unknown> {
-  interpret(expression: Expression) {
+export class Interpreter implements Visitor<unknown>, StatementVisitor {
+  interpret(statements: Array<Statement>) {
     try {
-      const result = this.evaluate(expression);
-      console.log(result);
+      for (const stm of statements) {
+        this.execute(stm);
+      }
     } catch (err) {
       if (err instanceof RuntimeError) {
         Lev.runtimeError(err);
       }
     }
+  }
+
+  visitPrintStatement(printStm: PrintStatement): void {
+    const value = this.evaluate(printStm.expression);
+    console.log(value);
+  }
+
+  visitExpressionStatement(expressionStm: ExpressionStatement): void {
+    this.evaluate(expressionStm.expression);
   }
 
   visitLiteral(literal: Literal): unknown {
@@ -88,6 +104,10 @@ export class Interpreter implements Visitor<unknown> {
         this.checkNumberOperands(binary.operator, left, right);
         return (left as number) * (right as number);
     }
+  }
+
+  private execute(stm: Statement) {
+    stm.accept(this);
   }
 
   private checkNumberOperand(operator: Token, operand: unknown) {
