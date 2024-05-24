@@ -6,10 +6,10 @@ import {
   Literal,
   Unary,
   Variable,
-  Visitor,
+  ExpressionVisitor,
 } from "./Expression";
 
-export class ExpressionPrinter implements Visitor<string> {
+export class ExpressionPrinter implements ExpressionVisitor<string> {
   print(ast: Expression) {
     return ast.accept(this);
   }

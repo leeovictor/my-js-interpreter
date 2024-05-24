@@ -1,6 +1,6 @@
 import { Token } from "./Token";
 
-export interface Visitor<R> {
+export interface ExpressionVisitor<R> {
   visitAssign(assign: Assign): R;
   visitBinary(binary: Binary): R;
   visitGrouping(grouping: Grouping): R;
@@ -10,7 +10,7 @@ export interface Visitor<R> {
 }
 
 export abstract class Expression {
-  abstract accept<R>(visitor: Visitor<R>): R;
+  abstract accept<R>(visitor: ExpressionVisitor<R>): R;
 }
 
 export class Binary extends Expression {
@@ -22,7 +22,7 @@ export class Binary extends Expression {
     super();
   }
 
-  accept<R>(visitor: Visitor<R>): R {
+  accept<R>(visitor: ExpressionVisitor<R>): R {
     return visitor.visitBinary(this);
   }
 }
@@ -32,7 +32,7 @@ export class Grouping extends Expression {
     super();
   }
 
-  accept<R>(visitor: Visitor<R>): R {
+  accept<R>(visitor: ExpressionVisitor<R>): R {
     return visitor.visitGrouping(this);
   }
 }
@@ -42,7 +42,7 @@ export class Literal extends Expression {
     super();
   }
 
-  accept<R>(visitor: Visitor<R>): R {
+  accept<R>(visitor: ExpressionVisitor<R>): R {
     return visitor.visitLiteral(this);
   }
 }
@@ -55,7 +55,7 @@ export class Unary extends Expression {
     super();
   }
 
-  accept<R>(visitor: Visitor<R>): R {
+  accept<R>(visitor: ExpressionVisitor<R>): R {
     return visitor.visitUnary(this);
   }
 }
@@ -65,7 +65,7 @@ export class Variable extends Expression {
     super();
   }
 
-  accept<R>(visitor: Visitor<R>): R {
+  accept<R>(visitor: ExpressionVisitor<R>): R {
     return visitor.visitVariable(this);
   }
 }
@@ -78,7 +78,7 @@ export class Assign extends Expression {
     super();
   }
 
-  accept<R>(visitor: Visitor<R>): R {
+  accept<R>(visitor: ExpressionVisitor<R>): R {
     return visitor.visitAssign(this);
   }
 }

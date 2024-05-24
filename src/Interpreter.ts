@@ -8,7 +8,7 @@ import {
   Literal,
   Unary,
   Variable,
-  Visitor,
+  ExpressionVisitor,
 } from "./Expression";
 import { RuntimeError } from "./RuntimeError";
 import {
@@ -23,7 +23,9 @@ import {
 import { Token } from "./Token";
 import { TokenType } from "./TokenType";
 
-export class Interpreter implements Visitor<unknown>, StatementVisitor {
+export class Interpreter
+  implements ExpressionVisitor<unknown>, StatementVisitor
+{
   private environment = new Environment();
 
   interpret(statements: Array<Statement>) {
