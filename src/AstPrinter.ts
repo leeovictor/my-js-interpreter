@@ -1,4 +1,5 @@
 import {
+  Assign,
   Binary,
   Expression,
   Grouping,
@@ -11,6 +12,10 @@ import {
 export class AstPrinter implements Visitor<string> {
   print(ast: Expression) {
     return ast.accept(this);
+  }
+
+  visitAssign(assign: Assign): string {
+    return `= ${assign.name.lexeme}:${assign.value.accept(this)}`;
   }
 
   visitBinary(binary: Binary): string {

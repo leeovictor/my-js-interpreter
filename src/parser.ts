@@ -6,10 +6,12 @@ import {
   Unary,
   Expression,
   Variable,
+  Assign,
 } from "./Expression";
 import { Lev } from "./index";
 import { Token } from "./Token";
 import {
+  Block,
   ExpressionStatement,
   PrintStatement,
   Statement,
@@ -58,7 +60,18 @@ export class Parser {
 
   private statement(): Statement {
     if (this.match(TokenType.PRINT)) return this.printStatement();
+    if (this.match(TokenType.LEFT_BRACE)) return new Block(this.block());
+
     return this.expressionStatement();
+  }
+
+  private block(): Statement[] {
+    const statements = [];
+    while (!this.check(TokenType.RIGHT_BRACE) && !this.isAtEnd()) {
+      statements.push(this.declaration());
+    }
+    this.consume(TokenType.RIGHT_BRACE, "Expect '}' after block.");
+    return statements;
   }
 
   private expressionStatement(): Statement {
@@ -74,7 +87,23 @@ export class Parser {
   }
 
   private expression() {
-    return this.equality();
+    return this.assignment();
+  }
+
+  private assignment(): Expression {
+    const expr = this.equality();
+    if (this.match(TokenType.EQUAL)) {
+      const equals = this.previous();
+      const value = this.assignment();
+
+      if (expr instanceof Variable) {
+        const name = expr.name;
+        return new Assign(name, value);
+      }
+
+      this.error(equals, "Invalid assignment target.");
+    }
+    return expr;
   }
 
   private equality() {

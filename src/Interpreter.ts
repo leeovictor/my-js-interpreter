@@ -1,6 +1,7 @@
 import { Lev } from ".";
 import { Environment } from "./Environment";
 import {
+  Assign,
   Binary,
   Expression,
   Grouping,
@@ -11,6 +12,7 @@ import {
 } from "./Expression";
 import { RuntimeError } from "./RuntimeError";
 import {
+  Block,
   ExpressionStatement,
   PrintStatement,
   Statement,
@@ -48,6 +50,10 @@ export class Interpreter implements Visitor<unknown>, StatementVisitor {
     const value: unknown =
       varDecl.initializer !== null ? this.evaluate(varDecl.initializer) : null;
     this.environment.define(varDecl.name.lexeme, value);
+  }
+
+  visitBlock(block: Block): void {
+    this.executeBlock(block.statements, new Environment(this.environment));
   }
 
   visitLiteral(literal: Literal): unknown {
@@ -119,6 +125,24 @@ export class Interpreter implements Visitor<unknown>, StatementVisitor {
 
   visitVariable(variable: Variable): unknown {
     return this.environment.get(variable.name);
+  }
+
+  visitAssign(assign: Assign): unknown {
+    const value = this.evaluate(assign.value);
+    this.environment.assign(assign.name, value);
+    return value;
+  }
+
+  private executeBlock(statements: Array<Statement>, env: Environment) {
+    const prevEnv = this.environment;
+    try {
+      this.environment = env;
+      for (const stm of statements) {
+        this.execute(stm);
+      }
+    } finally {
+      this.environment = prevEnv;
+    }
   }
 
   private execute(stm: Statement) {

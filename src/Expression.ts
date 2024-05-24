@@ -1,6 +1,7 @@
 import { Token } from "./Token";
 
 export interface Visitor<R> {
+  visitAssign(assign: Assign): R;
   visitBinary(binary: Binary): R;
   visitGrouping(grouping: Grouping): R;
   visitLiteral(literal: Literal): R;
@@ -66,5 +67,18 @@ export class Variable extends Expression {
 
   accept<R>(visitor: Visitor<R>): R {
     return visitor.visitVariable(this);
+  }
+}
+
+export class Assign extends Expression {
+  constructor(
+    public name: Token,
+    public value: Expression,
+  ) {
+    super();
+  }
+
+  accept<R>(visitor: Visitor<R>): R {
+    return visitor.visitAssign(this);
   }
 }
