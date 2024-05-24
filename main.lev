@@ -1,10 +1,6 @@
-var a = 1;
+var age = 30;
+var newAge = 20;
 
-{
-  var b = a + 2;
-  var a = b + 10;
-  print a;
-  print b;
-}
-
-print a;
+var result = age + newAge + 1;
+print age + newAge;
+print result;
