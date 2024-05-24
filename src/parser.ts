@@ -160,7 +160,7 @@ export class Parser {
 
     if (this.match(TokenType.LEFT_PAREN)) {
       const expr = this.expression();
-      this.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression");
+      this.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
       return new Grouping(expr);
     }
 
