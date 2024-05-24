@@ -1,10 +1,12 @@
-# Simple Typescript Interpreter (WIP)
+# Simple Typescript Interpreter
 
 A simple TypeScript interpreter.
 
 ## Table of contents
 
-TODO
+- [Language Grammar](#language-grammar)
+- [Interpreter Phases](#interpreter-phases)
+- [Resources](#references)
 
 ## Language Grammar
 
@@ -20,7 +22,7 @@ TODO
 
 TODO
 
-### Evaluate
+### Interpret
 
 TODO
 
