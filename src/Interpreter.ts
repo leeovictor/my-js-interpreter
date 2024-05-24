@@ -14,6 +14,7 @@ import { RuntimeError } from "./RuntimeError";
 import {
   Block,
   ExpressionStatement,
+  If,
   PrintStatement,
   Statement,
   StatementVisitor,
@@ -37,6 +38,7 @@ export class Interpreter implements Visitor<unknown>, StatementVisitor {
     }
   }
 
+  // Statements visit methods
   visitPrintStatement(printStm: PrintStatement): void {
     const value = this.evaluate(printStm.expression);
     console.log(value);
@@ -56,6 +58,16 @@ export class Interpreter implements Visitor<unknown>, StatementVisitor {
     this.executeBlock(block.statements, new Environment(this.environment));
   }
 
+  visitIf(ifStm: If): void {
+    const value = this.evaluate(ifStm.condition);
+    if (this.isTruthy(value)) {
+      this.execute(ifStm.thenBranch);
+    } else if (ifStm.elseBranch !== null) {
+      this.execute(ifStm.elseBranch);
+    }
+  }
+
+  // Expression visit methods
   visitLiteral(literal: Literal): unknown {
     return literal.value;
   }

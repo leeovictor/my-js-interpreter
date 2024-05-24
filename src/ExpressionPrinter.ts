@@ -9,7 +9,7 @@ import {
   Visitor,
 } from "./Expression";
 
-export class AstPrinter implements Visitor<string> {
+export class ExpressionPrinter implements Visitor<string> {
   print(ast: Expression) {
     return ast.accept(this);
   }

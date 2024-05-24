@@ -13,6 +13,7 @@ import { Token } from "./Token";
 import {
   Block,
   ExpressionStatement,
+  If,
   PrintStatement,
   Statement,
   Var,
@@ -61,8 +62,23 @@ export class Parser {
   private statement(): Statement {
     if (this.match(TokenType.PRINT)) return this.printStatement();
     if (this.match(TokenType.LEFT_BRACE)) return new Block(this.block());
+    if (this.match(TokenType.IF)) return this.ifStatement();
 
     return this.expressionStatement();
+  }
+
+  private ifStatement() {
+    this.consume(TokenType.LEFT_PAREN, "Expect a '(' after if statement.");
+    const condition = this.expression();
+    this.consume(TokenType.RIGHT_PAREN, "Expect a ')' after if condition.");
+
+    const thenBranch = this.statement();
+    let elseBranch = null;
+    if (this.match(TokenType.ELSE)) {
+      elseBranch = this.statement();
+    }
+
+    return new If(condition, thenBranch, elseBranch);
   }
 
   private block(): Statement[] {

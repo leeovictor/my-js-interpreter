@@ -6,6 +6,7 @@ export interface StatementVisitor {
   visitPrintStatement(printStm: PrintStatement): void;
   visitExpressionStatement(expressionStm: ExpressionStatement): void;
   visitVar(varDecl: Var): void;
+  visitIf(ifStm: If): void;
 }
 
 export abstract class Statement {
@@ -52,5 +53,19 @@ export class Block extends Statement {
 
   accept(visitor: StatementVisitor): void {
     visitor.visitBlock(this);
+  }
+}
+
+export class If extends Statement {
+  constructor(
+    public condition: Expression,
+    public thenBranch: Statement,
+    public elseBranch: Statement | null,
+  ) {
+    super();
+  }
+
+  accept(visitor: StatementVisitor): void {
+    visitor.visitIf(this);
   }
 }

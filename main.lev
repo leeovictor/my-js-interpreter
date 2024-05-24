@@ -1,6 +1,17 @@
-var age = 30;
-var newAge = 20;
+var a = 10 + 5;
+var compareWith = 10;
 
-var result = age + newAge + 1;
-print age + newAge;
+var result;
+
+if (a > compareWith) {
+  print "if branch";
+  result = "a MAIOR que 10";
+  if (a > 7) {
+    print "if dentro de if";
+  }
+} else {
+  print "else branch";
+  result = "a MENOR que 10";
+}
+
 print result;
