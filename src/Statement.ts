@@ -1,8 +1,10 @@
 import { Expression } from "./Expression";
+import { Token } from "./Token";
 
 export interface StatementVisitor {
   visitPrintStatement(printStm: PrintStatement): void;
   visitExpressionStatement(expressionStm: ExpressionStatement): void;
+  visitVar(varDecl: Var): void;
 }
 
 export abstract class Statement {
@@ -26,5 +28,18 @@ export class PrintStatement extends Statement {
 
   accept(visitor: StatementVisitor) {
     visitor.visitPrintStatement(this);
+  }
+}
+
+export class Var extends Statement {
+  constructor(
+    public name: Token,
+    public initializer: Expression | null,
+  ) {
+    super();
+  }
+
+  accept(visitor: StatementVisitor): void {
+    visitor.visitVar(this);
   }
 }

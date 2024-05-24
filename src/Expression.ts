@@ -5,6 +5,7 @@ export interface Visitor<R> {
   visitGrouping(grouping: Grouping): R;
   visitLiteral(literal: Literal): R;
   visitUnary(unary: Unary): R;
+  visitVariable(variable: Variable): R;
 }
 
 export abstract class Expression {
@@ -55,5 +56,15 @@ export class Unary extends Expression {
 
   accept<R>(visitor: Visitor<R>): R {
     return visitor.visitUnary(this);
+  }
+}
+
+export class Variable extends Expression {
+  constructor(public name: Token) {
+    super();
+  }
+
+  accept<R>(visitor: Visitor<R>): R {
+    return visitor.visitVariable(this);
   }
 }

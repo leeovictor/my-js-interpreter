@@ -1,8 +1,20 @@
 import { TokenType } from "./TokenType";
-import { Binary, Grouping, Literal, Unary, Expression } from "./Expression";
+import {
+  Binary,
+  Grouping,
+  Literal,
+  Unary,
+  Expression,
+  Variable,
+} from "./Expression";
 import { Lev } from "./index";
 import { Token } from "./Token";
-import { ExpressionStatement, PrintStatement, Statement } from "./Statement";
+import {
+  ExpressionStatement,
+  PrintStatement,
+  Statement,
+  Var,
+} from "./Statement";
 
 class ParserError extends Error {
   constructor(message: string) {
@@ -22,9 +34,26 @@ export class Parser {
   parse(): Array<Statement> {
     const statements = [];
     while (!this.isAtEnd()) {
-      statements.push(this.statement());
+      statements.push(this.declaration());
     }
     return statements;
+  }
+
+  private declaration() {
+    if (this.match(TokenType.VAR)) {
+      return this.varDeclaration();
+    }
+    return this.statement();
+  }
+
+  private varDeclaration() {
+    const name = this.consume(TokenType.IDENTIFIER, "Expect variable name.");
+    let initializer: Expression | null = null;
+    if (this.match(TokenType.EQUAL)) {
+      initializer = this.expression();
+    }
+    this.consume(TokenType.SEMICOLON, "Expect ';' after variable declartion.");
+    return new Var(name, initializer);
   }
 
   private statement(): Statement {
@@ -94,6 +123,7 @@ export class Parser {
     if (this.match(TokenType.FALSE)) return new Literal(false);
     if (this.match(TokenType.TRUE)) return new Literal(true);
     if (this.match(TokenType.NIL)) return new Literal(null);
+    if (this.match(TokenType.IDENTIFIER)) return new Variable(this.previous());
 
     if (this.match(TokenType.NUMBER, TokenType.STRING)) {
       return new Literal(this.previous().literal);

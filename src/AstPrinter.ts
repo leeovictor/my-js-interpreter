@@ -4,6 +4,7 @@ import {
   Grouping,
   Literal,
   Unary,
+  Variable,
   Visitor,
 } from "./Expression";
 
@@ -26,5 +27,9 @@ export class AstPrinter implements Visitor<string> {
 
   visitUnary(unary: Unary): string {
     return `${unary.operator.lexeme} ${unary.right.accept(this)}`;
+  }
+
+  visitVariable(variable: Variable): string {
+    return `(var) ${variable.name.lexeme}`;
   }
 }

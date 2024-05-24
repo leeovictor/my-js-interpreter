@@ -1,10 +1,12 @@
 import { Lev } from ".";
+import { Environment } from "./Environment";
 import {
   Binary,
   Expression,
   Grouping,
   Literal,
   Unary,
+  Variable,
   Visitor,
 } from "./Expression";
 import { RuntimeError } from "./RuntimeError";
@@ -13,11 +15,14 @@ import {
   PrintStatement,
   Statement,
   StatementVisitor,
+  Var,
 } from "./Statement";
 import { Token } from "./Token";
 import { TokenType } from "./TokenType";
 
 export class Interpreter implements Visitor<unknown>, StatementVisitor {
+  private environment = new Environment();
+
   interpret(statements: Array<Statement>) {
     try {
       for (const stm of statements) {
@@ -37,6 +42,12 @@ export class Interpreter implements Visitor<unknown>, StatementVisitor {
 
   visitExpressionStatement(expressionStm: ExpressionStatement): void {
     this.evaluate(expressionStm.expression);
+  }
+
+  visitVar(varDecl: Var): void {
+    const value: unknown =
+      varDecl.initializer !== null ? this.evaluate(varDecl.initializer) : null;
+    this.environment.define(varDecl.name.lexeme, value);
   }
 
   visitLiteral(literal: Literal): unknown {
@@ -104,6 +115,10 @@ export class Interpreter implements Visitor<unknown>, StatementVisitor {
         this.checkNumberOperands(binary.operator, left, right);
         return (left as number) * (right as number);
     }
+  }
+
+  visitVariable(variable: Variable): unknown {
+    return this.environment.get(variable.name);
   }
 
   private execute(stm: Statement) {
