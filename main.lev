@@ -1,17 +1,13 @@
-var a = 10 + 5;
-var compareWith = 10;
+var num = 1;
+var prev = 0;
 
-var result;
-
-if (a > compareWith) {
-  print "if branch";
-  result = "a MAIOR que 10";
-  if (a > 7) {
-    print "if dentro de if";
-  }
-} else {
-  print "else branch";
-  result = "a MENOR que 10";
+// FIBONACCI
+while (num <= 100) {
+  print num;
+  
+  var aux = num;
+  num = num + prev;
+  prev = aux;
 }
 
-print result;
+print "ready";

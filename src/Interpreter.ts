@@ -19,6 +19,7 @@ import {
   Statement,
   StatementVisitor,
   Var,
+  While,
 } from "./Statement";
 import { Token } from "./Token";
 import { TokenType } from "./TokenType";
@@ -66,6 +67,12 @@ export class Interpreter
       this.execute(ifStm.thenBranch);
     } else if (ifStm.elseBranch !== null) {
       this.execute(ifStm.elseBranch);
+    }
+  }
+
+  visitWhile(whileStm: While): void {
+    while (this.evaluate(whileStm.condition)) {
+      this.execute(whileStm.statement);
     }
   }
 

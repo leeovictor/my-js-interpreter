@@ -17,6 +17,7 @@ import {
   PrintStatement,
   Statement,
   Var,
+  While,
 } from "./Statement";
 
 class ParserError extends Error {
@@ -63,6 +64,7 @@ export class Parser {
     if (this.match(TokenType.PRINT)) return this.printStatement();
     if (this.match(TokenType.LEFT_BRACE)) return new Block(this.block());
     if (this.match(TokenType.IF)) return this.ifStatement();
+    if (this.match(TokenType.WHILE)) return this.whileStatement();
 
     return this.expressionStatement();
   }
@@ -79,6 +81,14 @@ export class Parser {
     }
 
     return new If(condition, thenBranch, elseBranch);
+  }
+
+  private whileStatement() {
+    this.consume(TokenType.LEFT_PAREN, "Expect a '(' after while statement.");
+    const condition = this.expression();
+    this.consume(TokenType.RIGHT_PAREN, "Expect a ')' after while condition.");
+
+    return new While(condition, this.statement());
   }
 
   private block(): Statement[] {

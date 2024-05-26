@@ -7,6 +7,7 @@ export interface StatementVisitor {
   visitExpressionStatement(expressionStm: ExpressionStatement): void;
   visitVar(varDecl: Var): void;
   visitIf(ifStm: If): void;
+  visitWhile(whileStm: While): void;
 }
 
 export abstract class Statement {
@@ -67,5 +68,18 @@ export class If extends Statement {
 
   accept(visitor: StatementVisitor): void {
     visitor.visitIf(this);
+  }
+}
+
+export class While extends Statement {
+  constructor(
+    public condition: Expression,
+    public statement: Statement,
+  ) {
+    super();
+  }
+
+  accept(visitor: StatementVisitor): void {
+    visitor.visitWhile(this);
   }
 }
