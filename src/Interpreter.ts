@@ -71,7 +71,7 @@ export class Interpreter
   }
 
   visitWhile(whileStm: While): void {
-    while (this.evaluate(whileStm.condition)) {
+    while (this.isTruthy(this.evaluate(whileStm.condition))) {
       this.execute(whileStm.statement);
     }
   }
