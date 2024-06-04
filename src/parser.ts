@@ -56,7 +56,7 @@ export class Parser {
     if (this.match(TokenType.EQUAL)) {
       initializer = this.expression();
     }
-    this.consume(TokenType.SEMICOLON, "Expect ';' after variable declartion.");
+    this.consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.");
     return new Var(name, initializer);
   }
 
@@ -65,8 +65,49 @@ export class Parser {
     if (this.match(TokenType.LEFT_BRACE)) return new Block(this.block());
     if (this.match(TokenType.IF)) return this.ifStatement();
     if (this.match(TokenType.WHILE)) return this.whileStatement();
+    if (this.match(TokenType.FOR)) return this.forStatement();
 
     return this.expressionStatement();
+  }
+
+  private forStatement(): Statement {
+    this.consume(TokenType.LEFT_PAREN, "Expect a '(' after for statement.");
+
+    let initializer;
+    if (this.match(TokenType.SEMICOLON)) {
+      initializer = null;
+    } else if (this.match(TokenType.VAR)) {
+      initializer = this.varDeclaration();
+    } else {
+      initializer = this.expressionStatement();
+    }
+
+    let condition: Expression | null = null;
+    if (!this.check(TokenType.SEMICOLON)) {
+      condition = this.expression();
+    }
+    this.consume(TokenType.SEMICOLON, "Expect a ';' after loop condition.");
+
+    let finalExp: Expression | null = null;
+    if (!this.check(TokenType.RIGHT_PAREN)) {
+      finalExp = this.expression();
+    }
+    this.consume(TokenType.RIGHT_PAREN, "Expect a '(' after for statement.");
+
+    let body = !this.match(TokenType.SEMICOLON)
+      ? this.statement()
+      : new Block([]);
+
+    if (finalExp) {
+      body = new Block([body, new ExpressionStatement(finalExp)]);
+    }
+    body = new While(condition ?? new Literal(true), body);
+
+    if (initializer) {
+      body = new Block([initializer, body]);
+    }
+
+    return body;
   }
 
   private ifStatement() {

@@ -8,9 +8,15 @@ statement      → exprStmt
                | printStmt
                | ifStmt
                | whileStm
+               | forStm
                | block ;
 
 whileStm       → "while" "(" expression ")" statement ;
+forStm         → "for" "("
+               ( varDecl | exprStmt | ";" )
+               expression? ";"
+               expression? ")"
+               statement | ";" ;
 ifStmt         → "if" "(" expression ")"statement
                ( "else" statement )? ;
 block          → "{" declaration* "}" ;
